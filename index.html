@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Konnektoren – Drag & Drop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #2a5d84;
+    }
+
+    .sentence {
+      margin: 15px 0;
+    }
+
+    .dropzone {
+      display: inline-block;
+      min-width: 80px;
+      padding: 5px 10px;
+      margin: 0 5px;
+      border: 2px dashed #aaa;
+      border-radius: 5px;
+      vertical-align: middle;
+    }
+
+    .word-bank {
+      margin: 30px 0;
+    }
+
+    .draggable {
+      display: inline-block;
+      background-color: #2a5d84;
+      color: white;
+      padding: 8px 12px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: grab;
+    }
+
+    .draggable:active {
+      cursor: grabbing;
+    }
+
+    .feedback {
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #2a5d84;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1b3d56;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Drag & Drop: Konnektoren zuordnen</h1>
+  <p>Ziehe den passenden Konnektor in die Lücke.</p>
+
+  <div class="word-bank">
+    <div class="draggable" draggable="true" id="weil">weil</div>
+    <div class="draggable" draggable="true" id="obwohl1">obwohl</div>
+    <div class="draggable" draggable="true" id="damit1">damit</div>
+    <div class="draggable" draggable="true" id="weil2">weil</div>
+    <div class="draggable" draggable="true" id="obwohl2">obwohl</div>
+    <div class="draggable" draggable="true" id="damit2">damit</div>
+    <div class="draggable" draggable="true" id="weil3">weil</div>
+  </div>
+
+  <div id="sentences">
+    <div class="sentence">1. Ich gehe heute nicht joggen, <span class="dropzone" data-answer="weil"></span> es regnet. <span class="feedback"></span></div>
+    <div class="sentence">2. <span class="dropzone" data-answer="obwohl"></span> sie krank ist, geht sie zur Arbeit. <span class="feedback"></span></div>
+    <div class="sentence">3. Er spricht langsam, <span class="dropzone" data-answer="damit"></span> alle ihn verstehen. <span class="feedback"></span></div>
+    <div class="sentence">4. Ich esse nichts, <span class="dropzone" data-answer="weil"></span> ich keinen Hunger habe. <span class="feedback"></span></div>
+    <div class="sentence">5. <span class="dropzone" data-answer="obwohl"></span> er müde ist, lernt er weiter. <span class="feedback"></span></div>
+    <div class="sentence">6. Wir lernen Deutsch, <span class="dropzone" data-answer="damit"></span> wir in Deutschland studieren können. <span class="feedback"></span></div>
+    <div class="sentence">7. <span class="dropzone" data-answer="weil"></span> ich gestern krank war, konnte ich nicht kommen. <span class="feedback"></span></div>
+  </div>
+
+  <button onclick="checkAnswers()">Antworten überprüfen</button>
+
+  <script>
+    // Drag & Drop Logik
+    const draggables = document.querySelectorAll('.draggable');
+    const dropzones = document.querySelectorAll('.dropzone');
+
+    draggables.forEach(elem => {
+      elem.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.textContent);
+      });
+    });
+
+    dropzones.forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        zone.style.backgroundColor = "#eef";
+      });
+
+      zone.addEventListener('dragleave', e => {
+        zone.style.backgroundColor = "";
+      });
+
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        const data = e.dataTransfer.getData('text/plain');
+        zone.textContent = data;
+        zone.style.backgroundColor = "";
+      });
+    });
+
+    function checkAnswers() {
+      dropzones.forEach(zone => {
+        const userAnswer = zone.textContent.trim();
+        const correct = zone.dataset.answer;
+        const feedbackElem = zone.parentElement.querySelector('.feedback');
+
+        if (userAnswer === correct) {
+          feedbackElem.textContent = "✔️ Richtig!";
+          feedbackElem.style.color = "green";
+        } else if (userAnswer === "") {
+          feedbackElem.textContent = "❗ Bitte einfügen.";
+          feedbackElem.style.color = "orange";
+        } else {
+          feedbackElem.textContent = "❌ Falsch.";
+          feedbackElem.style.color = "red";
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
